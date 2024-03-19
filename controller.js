@@ -8,8 +8,7 @@ async function loginHandler(username, password) {
     return new Promise((resolve, reject) => {
       compare(password, user.password, (err, res) => {
         if (!user || !res) {
-          console.log(err);
-          reject("invalid username or password");
+          reject(new Error("invalid username or password"));
         } else {
           resolve(user);
         }

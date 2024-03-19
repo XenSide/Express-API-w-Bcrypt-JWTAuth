@@ -8,7 +8,7 @@ const client = new MongoClient(uri);
 
 async function getUser(username) {
   try {
-    const database = client.db("barbershop");
+    const database = client.db("AuthDB");
     const users = database.collection("users");
     const user = await users.findOne({ username: username });
     return user;

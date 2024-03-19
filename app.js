@@ -2,16 +2,11 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const { getBarbers } = require("./db");
-const { loginHandler } = require("./controller");
-const { randomBytes, pbkdf2 } = require("crypto");
-const { hash, compare } = require("bcrypt");
+const { loginHandler, generateJWT } = require("./controller");
 
 require("dotenv").config(); // Load .env file into process.env
 
 var { expressjwt } = require("express-jwt");
-
-const jwt = require("jsonwebtoken");
 
 // eslint-disable-next-line no-undef
 const secret = process.env.JWT_SECRET;
@@ -23,10 +18,6 @@ const checkJWTmw = expressjwt({
   algorithms: ["HS256"],
   userProperty: "auth",
 });
-
-function generateJWT(username) {
-  return jwt.sign({ username: username }, secret, { expiresIn: "1h" });
-}
 
 var corsOptions = {
   origin: "http://localhost:3200",

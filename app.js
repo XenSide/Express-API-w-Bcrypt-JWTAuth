@@ -50,10 +50,7 @@ app.post("/login", async (req, res) => {
   if (user?.type !== "admin")
     return res.status(403).json({ message: "Admin only access" });
 
-  var token;
-
-  token = generateJWT(username);
-  res.status(200).json({ token: token });
+  res.status(200).json({ token: generateJWT(username) }); //respond with token in JSONbody
 });
 
 app.get("/", (req, res) => {

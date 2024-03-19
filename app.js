@@ -38,7 +38,8 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 app.post("/login", async (req, res) => {
-  const { username, password } = req.body;
+  var { username, password } = req.body;
+  username = username.toLowerCase();
 
   let user;
   try {

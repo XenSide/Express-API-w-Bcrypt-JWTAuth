@@ -18,7 +18,7 @@ const secret = process.env.JWT_SECRET;
 // eslint-disable-next-line no-undef
 const port = process.env.PORT || 3200;
 
-const checkJWT = expressjwt({
+const checkJWTmw = expressjwt({
   secret: secret,
   algorithms: ["HS256"],
   userProperty: "auth",
@@ -57,7 +57,7 @@ app.get("/", (req, res) => {
   res.json({ message: "Hello World!" });
 });
 
-app.get("/data", checkJWT, async (req, res) => {
+app.get("/data", checkJWTmw, async (req, res) => {
   res.json({ data: "This is a secret message" });
 });
 

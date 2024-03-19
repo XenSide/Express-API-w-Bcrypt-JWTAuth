@@ -1,6 +1,13 @@
 const { getUser } = require("./db");
 const { compare } = require("bcrypt");
 
+const jwt = require("jsonwebtoken");
+
+// eslint-disable-next-line no-undef
+function generateJWT(username, secret = process.env.JWT_SECRET) {
+  return jwt.sign({ username: username }, secret, { expiresIn: "1h" });
+}
+
 async function loginHandler(username, password) {
   let user;
   user = await getUser(username);
@@ -19,4 +26,4 @@ async function loginHandler(username, password) {
   }
 }
 
-module.exports = { loginHandler };
+module.exports = { generateJWT, loginHandler };

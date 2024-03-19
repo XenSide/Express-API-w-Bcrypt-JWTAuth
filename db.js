@@ -1,6 +1,7 @@
 const { MongoClient } = require("mongodb");
 
-const uri = "mongodb://localhost:29000/";
+// eslint-disable-next-line no-undef
+const uri = process.env.mongo_uri;
 
 const client = new MongoClient(uri);
 

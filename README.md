@@ -8,5 +8,6 @@ requires a .env file with the following content:
 
 `MONGO_URI = YOUR_MONGO_URI`
 
-and the following MongoDB structure: 
+and the following MongoDB structure:
+
 `AuthDB.users -> _id, username, password`

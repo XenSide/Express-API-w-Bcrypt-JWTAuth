@@ -1,7 +1,8 @@
 const { MongoClient } = require("mongodb");
+require("dotenv").config(); // Load .env file into process.env
 
 // eslint-disable-next-line no-undef
-const uri = process.env.mongo_uri;
+const uri = process.env.MONGO_URI;
 
 const client = new MongoClient(uri);
 

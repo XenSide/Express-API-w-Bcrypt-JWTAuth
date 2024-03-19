@@ -4,6 +4,9 @@ Connects to a mongodb database and authenticates users via salted and hashed pas
 
 requires a .env file with the following content:
 
-JWT_SECRET = YOUR_SECRET_KEY
+`JWT_SECRET = YOUR_SECRET_KEY`
 
-MONGO_URI = YOUR_MONGO_URI
+`MONGO_URI = YOUR_MONGO_URI`
+
+and the following MongoDB structure: 
+`AuthDB.users -> _id, username, password`

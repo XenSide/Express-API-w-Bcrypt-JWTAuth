@@ -44,7 +44,7 @@ app.post("/login", async (req, res) => {
   try {
     user = await loginHandler(username, password);
   } catch (e) {
-    return res.status(401).json({ message: e.message });
+    return res.status(401).json({ message: e });
   }
   if (user?.type !== "admin")
     return res.status(403).json({ message: "Admin only access" });

@@ -62,6 +62,8 @@ app.use((err, req, res, next) => {
   }
 });
 
-app.listen(port, () => {
-  console.log("Click here to access the server: http://localhost:" + port);
+connectDB().then(() => {
+  app.listen(port, () => {
+    console.log("Click here to access the server: http://localhost:" + port);
+  });
 });

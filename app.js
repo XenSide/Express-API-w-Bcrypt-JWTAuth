@@ -1,16 +1,15 @@
-/* eslint-disable no-unused-vars */
+const { connectDB } = require("./db");
+
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const { loginHandler, generateJWT } = require("./controller");
+const { AppError, errorHandler, loginHandler, generateJWT } = require("./controller");
 
 require("dotenv").config(); // Load .env file into process.env
 
-var { expressjwt } = require("express-jwt");
+const { expressjwt } = require("express-jwt");
 
-// eslint-disable-next-line no-undef
 const secret = process.env.JWT_SECRET;
-// eslint-disable-next-line no-undef
 const port = process.env.PORT || 3200;
 
 const checkJWTmw = expressjwt({
@@ -19,7 +18,7 @@ const checkJWTmw = expressjwt({
   userProperty: "auth",
 });
 
-var corsOptions = {
+const corsOptions = {
   origin: "http://localhost:3200",
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
@@ -28,20 +27,20 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
-app.post("/login", async (req, res) => {
-  var { username, password } = req.body;
+app.post("/login", async (req, res, next) => {
+  let { username, password } = req.body;
   username = username.toLowerCase();
 
   let user;
   try {
     user = await loginHandler(username, password);
+    if (user?.type !== "admin") {
+      throw new AppError("Admin only access", 403);
+    }
+    res.status(200).json({ token: generateJWT(username) }); //respond with token in JSONbody
   } catch (e) {
-    return res.status(401).json({ message: e.message });
+    next(e);
   }
-  if (user?.type !== "admin")
-    return res.status(403).json({ message: "Admin only access" });
-
-  res.status(200).json({ token: generateJWT(username) }); //respond with token in JSONbody
 });
 
 app.get("/", (req, res) => {
@@ -56,11 +55,8 @@ app.use((req, res) => {
   res.status(404).json({ message: "Not Found" });
 });
 
-app.use((err, req, res, next) => {
-  if (err.name === "UnauthorizedError") {
-    res.status(401).json({ message: "Invalid token" });
-  }
-});
+// eslint-disable-next-line no-unused-vars
+app.use(errorHandler);
 
 connectDB().then(() => {
   app.listen(port, () => {

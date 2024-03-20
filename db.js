@@ -1,23 +1,26 @@
 const { MongoClient } = require("mongodb");
-require("dotenv").config(); // Load .env file into process.env
 
-// eslint-disable-next-line no-undef
-const uri = process.env.MONGO_URI;
+const uri = "mongodb://localhost:29000/";
 
 const client = new MongoClient(uri);
 
-async function getUser(username) {
+let _db;
+
+async function connectDB() {
   try {
     await client.connect();
-    const database = client.db("barbershop");
-    const users = database.collection("users");
-    const user = await users.findOne({ username: username });
-    return user;
+    console.log("Connected to database");
+    _db = client.db("AuthDB");
   } catch (e) {
     console.error(e);
-  } finally {
-    await client.close();
+    process.exit(1); // Exit process with failure
   }
 }
 
-module.exports = { getUser };
+async function getUser(username) {
+  const users = _db.collection("users");
+  const user = await users.findOne({ username: username });
+  return user;
+}
+
+module.exports = { getUser, connectDB };

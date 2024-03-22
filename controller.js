@@ -23,8 +23,12 @@ function errorHandler(err, req, res, next) {
     res.status(err.status).json({ error: err.message });
   } else {
     // Other errors, such as syntax errors
-    console.log("🚀 ~ errorHandler ~ err.stack:", err.stack);
-    res.status(500).json({ error: "Something went wrong" });
+    if (err.name === "UnauthorizedError")
+      res.status(401).json({ error: err.message === "jwt expired" ? "Token expired" : err.message });
+    else {
+      console.log("🚀 ~ errorHandler ~ err.stack:", err.stack);
+      res.status(500).json({ error: "Something went wrong" });
+    }
   }
 }
 

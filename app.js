@@ -6,8 +6,10 @@ const app = express();
 const { AppError, errorHandler, loginHandler, generateJWT } = require("./controller");
 
 require("dotenv").config(); // Load .env file into process.env
-
+const { connectDB } = require("./db");
+const cors = require("cors");
 const { expressjwt } = require("express-jwt");
+const { AppError, errorHandler, loginHandler, generateJWT } = require("./controller");
 
 const secret = process.env.JWT_SECRET;
 const port = process.env.PORT || 3200;

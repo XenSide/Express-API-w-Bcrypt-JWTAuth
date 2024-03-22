@@ -1,15 +1,17 @@
-const { connectDB } = require("./db");
-
 const express = require("express");
-const cors = require("cors");
 const app = express();
-const { AppError, errorHandler, loginHandler, generateJWT } = require("./controller");
-
 require("dotenv").config(); // Load .env file into process.env
 const { connectDB } = require("./db");
 const cors = require("cors");
 const { expressjwt } = require("express-jwt");
+const ratelimit = require("express-rate-limit");
 const { AppError, errorHandler, loginHandler, generateJWT } = require("./controller");
+
+const limiter = ratelimit({
+  windowMs: 15 * 60 * 1000,
+  max: 75,
+  message: "Too many requests from this IP, please try again later",
+});
 
 const secret = process.env.JWT_SECRET;
 const port = process.env.PORT || 3200;
@@ -29,7 +31,7 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
-app.post("/login", async (req, res, next) => {
+app.post("/login", limiter, async (req, res, next) => {
   let { username, password } = req.body;
   username = username.toLowerCase();
 

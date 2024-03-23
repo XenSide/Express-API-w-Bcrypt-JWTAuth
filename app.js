@@ -5,7 +5,7 @@ const { connectDB } = require("./db");
 const cors = require("cors");
 const { expressjwt } = require("express-jwt");
 const ratelimit = require("express-rate-limit");
-const { AppError, errorHandler, loginHandler, generateJWT } = require("./controller");
+const { AppError, errorHandler, loginHandler, registerHandler, generateJWT } = require("./controller");
 
 const limiter = ratelimit({
   windowMs: 15 * 60 * 1000,
@@ -31,10 +31,38 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
+async function registerUser(req, res, next, userType = "user") {
+  let { username, password } = req.body;
+  if (!username || !password) {
+    next(new AppError("Username and password are required", 400));
+    return;
+  }
+
+  try {
+    await registerHandler(username, password, userType);
+    res.status(200).json({ message: "User created successfully" });
+  } catch (e) {
+    next(e);
+  }
+}
+
+//Handles creation of new client accounts
+app.post("/register", limiter, async (req, res, next) => {
+  registerUser(req, res, next);
+});
+
+//Handles creation of new administrator accounts
+app.post("/adminregister", limiter, checkJWTmw, async (req, res, next) => {
+  registerUser(req, res, next, "admin");
+});
+
 app.post("/login", limiter, async (req, res, next) => {
   let { username, password } = req.body;
-  username = username.toLowerCase();
-
+  if (!username || !password) {
+    next(new AppError("Username and password are required", 400));
+    return;
+  }
+  username = username.toLowerCase().trim();
   let user;
   try {
     user = await loginHandler(username, password);

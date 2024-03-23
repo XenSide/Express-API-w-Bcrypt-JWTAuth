@@ -23,4 +23,9 @@ async function getUser(username) {
   return user;
 }
 
-module.exports = { getUser, connectDB };
+async function createUser(username, hash, type) {
+  const users = _db.collection("users");
+  const user = await users.insertOne({ username, hash, type });
+  return user;
+}
+module.exports = { getUser, createUser, connectDB };
